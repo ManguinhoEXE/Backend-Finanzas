@@ -1,0 +1,25 @@
+# ============================================
+# Dependencias — Finanzas Backend
+# ============================================
+
+# Framework
+Django==5.2.4
+djangorestframework==3.16.0
+
+# Autenticación
+djangorestframework-simplejwt==5.5.0
+
+# Variables de entorno
+django-environ==0.13.0
+
+# Base de datos
+psycopg2-binary==2.9.10
+
+# Servidor WSGI (produccion)
+gunicorn==23.0.0
+
+# Archivos estaticos (produccion)
+whitenoise==6.9.0
+
+# Testing
+pytest-django==4.11.1

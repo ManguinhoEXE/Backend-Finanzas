@@ -1,0 +1,57 @@
+# ============================================
+# docker-compose.yml — Desarrollo Local
+# Django + PostgreSQL 16
+# ============================================
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: finanzas_web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - finanzas_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: finanzas_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-finanzas_dev}
+      - POSTGRES_USER=${POSTGRES_USER:-finanzas_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-finanzas_pass}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-finanzas_user} -d ${POSTGRES_DB:-finanzas_dev}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - finanzas_network
+
+volumes:
+  pgdata:
+  static_volume:
+
+networks:
+  finanzas_network:
+    driver: bridge

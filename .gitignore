@@ -1,0 +1,128 @@
+# ============================================
+# VARIABLES DE ENTORNO
+# ============================================
+.env
+.env.local
+.env.production
+.env.test
+.env.staging
+
+# ============================================
+# PYTHON
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+*.whl
+
+# ============================================
+# ENTORNO VIRTUAL
+# ============================================
+venv/
+.venv/
+ENV/
+env/
+.venv*/
+
+# ============================================
+# DJANGO
+# ============================================
+db.sqlite3
+db.sqlite3-journal
+*.log
+local_settings.py
+media/
+staticfiles/
+*.pot
+local_settings.py
+db.json
+
+# ============================================
+# PYTEST / TESTING
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.coverage.*
+coverage.xml
+
+# ============================================
+# DOCKER
+# ============================================
+docker-compose.override.yml
+
+# ============================================
+# MYPY / TYPE CHECKING
+# ============================================
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============================================
+# PYRIGHT
+# ============================================
+pyrightconfig.json
+
+# ============================================
+# RUFF / LINTERS
+# ============================================
+.ruff_cache/
+
+# ============================================
+# IDE / EDITORES
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# SISTEMA OPERATIVO
+# ============================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+._*
+*.lnk
+
+# ============================================
+# ARCHIVOS GENERADOS
+# ============================================
+*.bak
+*.tmp
+*.temp
+*.orig
+
+# ============================================
+# CELERY (si se usa en el futuro)
+# ============================================
+celerybeat-schedule
+celerybeat.pid
+
+# ============================================
+# REDIS (si se usa en el futuro)
+# ============================================
+dump.rdb
+
+# ============================================
+# GUNICORN
+# ============================================
+*.pid

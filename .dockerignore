@@ -1,0 +1,63 @@
+# ============================================
+# .dockerignore — Contexto de Docker
+# ============================================
+
+# Git
+.git
+.gitignore
+
+# Entorno virtual
+venv/
+.venv/
+ENV/
+env/
+
+# Variables de entorno (sensible)
+.env
+.env.local
+.env.production
+.env.test
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker
+docker-compose.yml
+docker-compose.prod.yml
+docker-compose.override.yml
+
+# Documentación
+README.md
+DOC_API.md
+*.md
+
+# Scripts SQL
+scripts/
+
+# Sistema
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
