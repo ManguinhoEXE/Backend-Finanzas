@@ -8,9 +8,9 @@ echo "============================================"
 # Puerto por defecto (Render usa PORT, local usa 8000)
 PORT=${PORT:-8000}
 
-# Esperar a que PostgreSQL este listo (solo si no es Supabase)
-if [ "$DB_HOST" != "aws-1-us-east-2.pooler.supabase.com" ]; then
-    echo "Esperando a que PostgreSQL este disponible en $DB_HOST:$PORT_DB..."
+# Esperar a que PostgreSQL este listo (solo en desarrollo local, no en Belmo)
+if [ -z "$DATABASE_URL" ]; then
+    echo "Esperando a que PostgreSQL este disponible en $HOST:${DB_PORT:-5432}..."
     until python -c "
 import psycopg2
 try:
@@ -18,8 +18,8 @@ try:
         dbname='$DB_NAME',
         user='$USER',
         password='$PASSWORD',
-        host='$DB_HOST',
-        port='$PORT'
+        host='$HOST',
+        port='${DB_PORT:-5432}'
     )
     conn.close()
     print('PostgreSQL conectado exitosamente.')
