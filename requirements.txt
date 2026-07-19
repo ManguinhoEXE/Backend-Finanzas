@@ -6,7 +6,7 @@
 Django==5.2.4
 djangorestframework==3.16.0
 
-# Autenticación
+# Autenticacion
 djangorestframework-simplejwt==5.5.0
 
 # Variables de entorno
@@ -14,6 +14,7 @@ django-environ==0.13.0
 
 # Base de datos
 psycopg2-binary==2.9.10
+dj-database-url==2.3.0
 
 # Servidor WSGI (produccion)
 gunicorn==23.0.0

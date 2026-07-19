@@ -26,6 +26,8 @@ env = environ.Env(
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, ['localhost', '127.0.0.1']),
     JWT_ACCESS_TOKEN_LIFETIME_MINUTES=(int, 60),
+    DATABASE_URL=(str, ''),
+    PORT=(int, 8000),
 )
 
 # Leer el archivo .env si existe
@@ -43,6 +45,9 @@ DEBUG = env('DEBUG')
 
 # Hosts permitidos (obtenidos desde .env)
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+
+# Puerto de la aplicacion (Belmo inyecta PORT)
+PORT = env('PORT')
 
 # ============================================
 # APLICACIONES INSTALADAS
@@ -72,6 +77,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,7 +87,7 @@ MIDDLEWARE = [
 ]
 
 # ============================================
-# CONFIGURACIÓN DE URLs
+# CONFIGURACION DE URLs
 # ============================================
 
 ROOT_URLCONF = 'config.urls'
@@ -116,19 +122,33 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # BASE DE DATOS (PostgreSQL)
 # ============================================
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('USER'),
-        'PASSWORD': env('PASSWORD'),
-        'HOST': env('HOST'),
-        'PORT': env('PORT'),
+DATABASE_URL = env('DATABASE_URL')
+
+if DATABASE_URL:
+    # Produccion (Belmo) - usa DATABASE_URL
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
     }
-}
+else:
+    # Desarrollo local - usa variables individuales
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME'),
+            'USER': env('USER'),
+            'PASSWORD': env('PASSWORD'),
+            'HOST': env('HOST'),
+            'PORT': env('DB_PORT', default='5432'),
+        }
+    }
 
 # ============================================
-# VALIDACIÓN DE CONTRASEÑAS
+# VALIDACION DE CONTRASENAS
 # ============================================
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -147,7 +167,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ============================================
-# INTERNACIONALIZACIÓN
+# INTERNACIONALIZACION
 # ============================================
 
 LANGUAGE_CODE = 'es-co'
@@ -159,10 +179,12 @@ USE_I18N = True
 USE_TZ = True
 
 # ============================================
-# ARCHIVOS ESTÁTICOS
+# ARCHIVOS ESTATICOS
 # ============================================
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ============================================
 # MODELO DE USUARIO PERSONALIZADO
@@ -176,7 +198,7 @@ AUTH_USER_MODEL = 'authentication.User'
 # ============================================
 
 REST_FRAMEWORK = {
-    # Autenticación por defecto: JWT
+    # Autenticacion por defecto: JWT
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -197,7 +219,7 @@ SIMPLE_JWT = {
     ),
     # Token de refresco (se usa para renovar el access token)
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    # Algoritmo de codificación
+    # Algoritmo de codificacion
     'ALGORITHM': 'HS256',
     # Firma del token
     'SIGNING_KEY': SECRET_KEY,
@@ -210,21 +232,13 @@ SIMPLE_JWT = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ============================================
-# RENDER - CONFIGURACION DE PRODUCCION
+# SEGURIDAD EN PRODUCCION
 # ============================================
 
-# Detectar si estamos en Render
-RENDER = os.environ.get('RENDER') is not None
-
-if RENDER:
-    # Seguridad en produccion
-    DEBUG = False
-    ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+if not DEBUG:
+    # Seguridad en produccion (Belmo, Render, etc.)
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
-
-    # WhiteNoise para archivos estaticos
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
