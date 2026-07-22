@@ -10,8 +10,8 @@
 <h1 align="center">Finanzas — API REST</h1>
 
 <p align="center">
-  API REST para la gestion de finanzas personales.<br/>
-  Autenticacion JWT sin login tradicional — solo se accede mediante llaves de activacion unicas.
+  API REST para la gestión de finanzas personales.<br/>
+  Autenticación JWT sin login tradicional — solo se accede mediante llaves de activación únicas.
 </p>
 
 <p align="center">
@@ -19,37 +19,37 @@
   <a href="#instalacion-manual">Manual</a> •
   <a href="#endpoints-de-la-api">Endpoints</a> •
   <a href="#tests">Tests</a> •
-  <a href="#decisiones-de-diseno">Decisiones</a>
+  <a href="#decisiones-de-dise%C3%B1o">Decisiones</a>
 </p>
 
 ---
 
-## Caracteristicas Principales
+## Características Principales
 
-- **Autenticacion sin login**: Los usuarios se activan con llaves unicas predefinidas. No hay formulario de registro ni contrasena.
-- **JWT sin estado**: Tokens de acceso (60 min) y refresco (7 dias). Sin sesiones en servidor.
+- **Autenticación sin login**: Los usuarios se activan con llaves únicas predefinidas. No hay formulario de registro ni contraseña.
+- **JWT sin estado**: Tokens de acceso (60 min) y refresco (7 días). Sin sesiones en servidor.
 - **Gastos compartidos**: Los gastos pueden ser privados o compartidos entre ambos usuarios.
 - **Metas de ahorro**: Crear, depositar, retirar, compartir metas con historial completo de movimientos.
 - **Permisos a nivel de objeto**: Cada usuario solo ve lo que le corresponde. Los recursos no autorizados retornan 404 (no 403).
-- **120 tests automatizados**: Cobertura completa de los 3 modulos con pytest-django.
-- **Dockerizado**: Dockerfile multi-stage + docker-compose para desarrollo y produccion.
+- **120 tests automatizados**: Cobertura completa de los 3 módulos con pytest-django.
+- **Dockerizado**: Dockerfile multi-stage + docker-compose para desarrollo y producción.
 
 ---
 
-## Stack Tecnologico
+## Stack Tecnológico
 
-| Componente | Tecnologia | Version |
+| Componente | Tecnología | Versión |
 |---|---|---|
 | Lenguaje | Python | 3.11 |
 | Framework | Django | 5.2.4 |
 | API REST | Django REST Framework | 3.16.0 |
-| Autenticacion | djangorestframework-simplejwt | 5.5.0 |
+| Autenticación | djangorestframework-simplejwt | 5.5.0 |
 | Variables de entorno | django-environ | 0.13.0 |
 | Base de datos | PostgreSQL (Supabase) | 16 |
 | Driver DB | psycopg2-binary | 2.9.10 |
 | Servidor WSGI | Gunicorn | 23.0.0 |
 | Testing | pytest-django | 4.11.1 |
-| Contenedorizacion | Docker + Docker Compose | 24.x |
+| Contenedorización | Docker + Docker Compose | 24.x |
 
 ---
 
@@ -57,13 +57,13 @@
 
 ```
 finanzas-api/
-├── config/                     # Configuracion central de Django
+├── config/                     # Configuración central de Django
 │   ├── settings.py             # Config principal (DB, apps, JWT)
 │   ├── urls.py                 # Enrutador principal
 │   ├── wsgi.py                 # Punto de entrada WSGI
 │   └── asgi.py                 # Punto de entrada ASGI
 │
-├── authentication/             # App: Autenticacion y usuarios
+├── authentication/             # App: Autenticación y usuarios
 │   ├── models.py               # User (custom) + AccessKey
 │   ├── views.py                # ActivateKeyView
 │   ├── serializers.py          # ActivateKeySerializer
@@ -81,7 +81,7 @@ finanzas-api/
 │
 ├── savings/                    # App: Metas de ahorro
 │   ├── models.py               # SavingGoal, SavingMovement, SavingGoalParticipant
-│   ├── views.py                # CRUD + depositos/retiros/movimientos/participantes
+│   ├── views.py                # CRUD + depósitos/retiros/movimientos/participantes
 │   ├── serializers.py          # SavingGoalSerializer, etc.
 │   ├── permissions.py          # IsGoalOwner, IsGoalParticipant
 │   ├── urls.py                 # /api/savings/
@@ -97,12 +97,12 @@ finanzas-api/
 │   ├── final_structure.sql     # Estructura completa de tablas
 │   ├── reset_database.sql      # Reset completo de datos
 │   └── verify_structure.sql    # Verificar estructura de BD
-├── Dockerfile                  # Build multi-stage para produccion
+├── Dockerfile                  # Build multi-stage para producción
 ├── docker-compose.yml          # Desarrollo: Django + PostgreSQL local
-├── docker-compose.prod.yml     # Produccion: Django + Supabase
+├── docker-compose.prod.yml     # Producción: Django + Supabase
 ├── entrypoint.sh               # Script de inicio del contenedor
 ├── conftest.py                 # Fixtures compartidos de tests
-├── pytest.ini                  # Configuracion de pytest
+├── pytest.ini                  # Configuración de pytest
 ├── requirements.txt            # Dependencias Python
 └── .env.example                # Template de variables de entorno
 ```
@@ -122,67 +122,67 @@ erDiagram
     SAVING_GOAL ||--o{ SAVING_GOAL_PARTICIPANT : "comparte"
 
     USER {
-        BigAutoField id PK
-        CharField name UK
-        DateTimeField created_at
-        DateTimeField last_login
+        bigint id PK
+        varchar name UK
+        timestamp created_at
+        timestamp last_login
     }
 
     ACCESS_KEY {
-        BigAutoField id PK
-        CharField key
-        BooleanField used
-        DateTimeField used_at
-        DateTimeField created_at
+        bigint id PK
+        varchar key
+        boolean used
+        timestamp used_at
+        timestamp created_at
     }
 
     EXPENSE {
-        BigAutoField id PK
-        ForeignKey usuario FK
-        CharField categoria
-        DateField fecha
-        CharField descripcion
-        DecimalField valor
-        BooleanField compartido
-        DateTimeField created_at
+        bigint id PK
+        bigint usuario FK
+        varchar categoria
+        date fecha
+        varchar descripcion
+        decimal valor
+        boolean compartido
+        timestamp created_at
     }
 
     SAVING_GOAL {
-        BigAutoField id PK
-        ForeignKey owner FK
-        CharField name
-        TextField description
-        DecimalField target_amount
-        DecimalField current_amount
-        CharField currency
-        DateField deadline
-        BooleanField is_shared
-        CharField status
-        DateTimeField created_at
-        DateTimeField updated_at
+        bigint id PK
+        bigint owner FK
+        varchar name
+        text description
+        decimal target_amount
+        decimal current_amount
+        varchar currency
+        date deadline
+        boolean is_shared
+        varchar status
+        timestamp created_at
+        timestamp updated_at
     }
 
     SAVING_MOVEMENT {
-        BigAutoField id PK
-        ForeignKey goal FK
-        ForeignKey user FK
-        CharField type
-        DecimalField amount
-        TextField description
-        DateTimeField created_at
+        bigint id PK
+        bigint goal FK
+        bigint user FK
+        varchar type
+        decimal amount
+        text description
+        timestamp created_at
     }
 
     SAVING_GOAL_PARTICIPANT {
-        BigAutoField id PK
-        ForeignKey goal FK
-        ForeignKey user FK
-        DateTimeField joined_at
+        bigint id PK
+        bigint goal FK
+        bigint user FK
+        timestamp joined_at
     }
 ```
 
 ---
 
-## Instalacion (Docker — Recomendado)
+## Instalación (Docker — Recomendado)
 
 ### Requisitos previos
 
@@ -209,16 +209,16 @@ cp .env.example .env
 docker compose up --build
 ```
 
-El servidor estara disponible en `http://localhost:8000/`
+El servidor estará disponible en `http://localhost:8000/`
 
-### 4. Levantar en produccion (Supabase)
+### 4. Levantar en producción (Supabase)
 
 ```bash
 # Editar .env apuntando a Supabase con DATABASE_URL
 docker compose -f docker-compose.prod.yml up --build -d
 ```
 
-### Comandos utiles de Docker
+### Comandos útiles de Docker
 
 ```bash
 # Ver logs en tiempo real
@@ -227,7 +227,7 @@ docker compose logs -f web
 # Detener servicios
 docker compose down
 
-# Detener y eliminar volumenes
+# Detener y eliminar volúmenes
 docker compose down -v
 
 # Ejecutar manage.py dentro del contenedor
@@ -237,7 +237,7 @@ docker compose exec web python manage.py createsuperuser
 
 ---
 
-## Instalacion Manual
+## Instalación Manual
 
 ### Requisitos previos
 
@@ -307,10 +307,10 @@ python manage.py runserver
 
 La carpeta `scripts/` contiene scripts SQL para gestionar la base de datos en Supabase:
 
-| Script | Descripcion |
+| Script | Descripción |
 |---|---|
 | `create_keys.sql` | Crea las llaves de acceso para los 2 usuarios |
-| `final_structure.sql` | Documenta la estructura completa de tablas e indices |
+| `final_structure.sql` | Documenta la estructura completa de tablas e índices |
 | `reset_database.sql` | Resetea todas las tablas y reinserta llaves |
 | `verify_structure.sql` | Verifica la estructura actual de la BD |
 
@@ -320,20 +320,20 @@ Todos los scripts se ejecutan desde el **SQL Editor** de Supabase Dashboard.
 
 ## Variables de Entorno
 
-| Variable | Descripcion | Ejemplo |
+| Variable | Descripción | Ejemplo |
 |---|---|---|
 | `SECRET_KEY` | Clave secreta de Django | `django-insecure-abc123...` |
 | `DEBUG` | Modo debug (`True`/`False`) | `True` |
 | `ALLOWED_HOSTS` | Hosts permitidos (separados por coma) | `localhost,127.0.0.1` |
-| `DATABASE_URL` | URL de conexion a PostgreSQL (produccion) | `postgres://user:pass@host:5432/db` |
+| `DATABASE_URL` | URL de conexión a PostgreSQL (producción) | `postgres://user:pass@host:5432/db` |
 | `DB_NAME` | Nombre de la base de datos (desarrollo) | `postgres` |
 | `USER` | Usuario de PostgreSQL (desarrollo) | `postgres.xxxxx` |
-| `PASSWORD` | Contrasena de PostgreSQL (desarrollo) | `tu-password` |
+| `PASSWORD` | Contraseña de PostgreSQL (desarrollo) | `tu-password` |
 | `HOST` | Host de la base de datos (desarrollo) | `db.xxx.supabase.co` |
 | `DB_PORT` | Puerto de la base de datos (desarrollo) | `6543` |
 | `JWT_ACCESS_TOKEN_LIFETIME_MINUTES` | Tiempo de vida del access token | `60` |
 
-> **Nota**: En produccion se usa `DATABASE_URL`. En desarrollo local se usan las variables individuales (`DB_NAME`, `USER`, `PASSWORD`, `HOST`, `DB_PORT`).
+> **Nota**: En producción se usa `DATABASE_URL`. En desarrollo local se usan las variables individuales (`DB_NAME`, `USER`, `PASSWORD`, `HOST`, `DB_PORT`).
 
 ---
 
@@ -341,39 +341,39 @@ Todos los scripts se ejecutan desde el **SQL Editor** de Supabase Dashboard.
 
 **Base URL:** `http://127.0.0.1:8000/api/`
 
-### Autenticacion
+### Autenticación
 
-| Metodo | Endpoint | Descripcion | Auth |
+| Método | Endpoint | Descripción | Auth |
 |---|---|---|---|
 | `POST` | `/api/activate-key/` | Activar llave y crear cuenta | No |
 | `POST` | `/api/token/refresh/` | Renovar access token | No |
 
 ### Gastos
 
-| Metodo | Endpoint | Descripcion | Auth |
+| Método | Endpoint | Descripción | Auth |
 |---|---|---|---|
 | `GET` | `/api/expenses/` | Listar gastos propios + compartidos | Si |
 | `POST` | `/api/expenses/` | Crear gasto | Si |
 | `GET` | `/api/expenses/{id}/` | Detalle de un gasto | Si |
-| `PUT` | `/api/expenses/{id}/` | Actualizar gasto (solo dueno) | Si |
+| `PUT` | `/api/expenses/{id}/` | Actualizar gasto (solo dueño) | Si |
 
-> **Nota:** DELETE no esta implementado en gastos (retorna 405).
+> **Nota:** DELETE no está implementado en gastos (retorna 405).
 
 ### Ahorro
 
-| Metodo | Endpoint | Descripcion | Auth |
+| Método | Endpoint | Descripción | Auth |
 |---|---|---|---|
 | `GET` | `/api/savings/goals/` | Listar metas propias + compartidas | Si |
 | `POST` | `/api/savings/goals/` | Crear meta de ahorro | Si |
 | `GET` | `/api/savings/goals/{id}/` | Detalle de una meta | Si |
-| `PUT` | `/api/savings/goals/{id}/` | Actualizar meta (solo dueno) | Si |
-| `DELETE` | `/api/savings/goals/{id}/` | Eliminar meta (solo dueno) | Si |
-| `POST` | `/api/savings/goals/{id}/deposit/` | Registrar deposito | Si |
+| `PUT` | `/api/savings/goals/{id}/` | Actualizar meta (solo dueño) | Si |
+| `DELETE` | `/api/savings/goals/{id}/` | Eliminar meta (solo dueño) | Si |
+| `POST` | `/api/savings/goals/{id}/deposit/` | Registrar depósito | Si |
 | `POST` | `/api/savings/goals/{id}/withdraw/` | Registrar retiro | Si |
 | `GET` | `/api/savings/goals/{id}/movements/` | Historial de movimientos | Si |
-| `POST` | `/api/savings/goals/{id}/participants/` | Agregar participante (solo dueno) | Si |
+| `POST` | `/api/savings/goals/{id}/participants/` | Agregar participante (solo dueño) | Si |
 
-> Para documentacion detallada de cada endpoint (request/response bodies, errores), ver [DOC_API.md](DOC_API.md).
+> Para documentación detallada de cada endpoint (request/response bodies, errores), ver [DOC_API.md](DOC_API.md).
 
 ---
 
@@ -389,7 +389,7 @@ python -m pytest -v
 docker compose exec web python -m pytest -v
 ```
 
-### Ejecutar tests de un modulo
+### Ejecutar tests de un módulo
 
 ```bash
 python -m pytest tests/test_authentication.py -v
@@ -399,7 +399,7 @@ python -m pytest tests/test_savings.py -v
 
 ### Cobertura
 
-| Modulo | Tests | Estado |
+| Módulo | Tests | Estado |
 |---|---|---|
 | authentication | 15 | Todos pasando |
 | expenses | 37 | Todos pasando |
@@ -408,41 +408,41 @@ python -m pytest tests/test_savings.py -v
 
 ---
 
-## Decisiones de Diseno
+## Decisiones de Diseño
 
-### Por que no hay login tradicional?
+### ¿Por qué no hay login tradicional?
 
-El sistema esta disenado para exactamente **2 usuarios** que comparten gastos y metas de ahorro. No tiene sentido un formulario de registro abierto. En su lugar, las llaves de activacion (`FINANZAS-2026-USUARIO-1`, `FINANZAS-2026-USUARIO-2`) se insertan directamente en la base de datos. Una vez activada una llave, el usuario nunca necesita hacer login de nuevo — el JWT se renueva con el refresh token.
+El sistema está diseñado para exactamente **2 usuarios** que comparten gastos y metas de ahorro. No tiene sentido un formulario de registro abierto. En su lugar, las llaves de activación (`FINANZAS-2026-USUARIO-1`, `FINANZAS-2026-USUARIO-2`) se insertan directamente en la base de datos. Una vez activada una llave, el usuario nunca necesita hacer login de nuevo — el JWT se renueva con el refresh token.
 
-### Por que no hay DELETE en gastos?
+### ¿Por qué no hay DELETE en gastos?
 
-Los gastos representan transacciones historicas. Eliminar un gasto distorsionaria los reportes financieros. En su lugar, los gastos pueden ser actualizados (por ejemplo, marcando un valor en 0 o cambiando la descripcion). Esto es una decision de negocio, no tecnica.
+Los gastos representan transacciones históricas. Eliminar un gasto distorsionaría los reportes financieros. En su lugar, los gastos pueden ser actualizados (por ejemplo, marcando un valor en 0 o cambiando la descripción). Esto es una decisión de negocio, no técnica.
 
 ### Permisos a nivel de objeto
 
-Los permisos van mas alla del `IsAuthenticated` global. Cada endpoint valida quien puede ver, editar o eliminar un recurso:
+Los permisos van más allá del `IsAuthenticated` global. Cada endpoint valida quién puede ver, editar o eliminar un recurso:
 
-- **Gastos**: El dueno puede ver y editar. Otros usuarios solo ven los gastos marcados como compartidos.
-- **Metas de ahorro**: El dueno tiene control total. Los participantes de metas compartidas pueden ver, depositar y retirar.
+- **Gastos**: El dueño puede ver y editar. Otros usuarios solo ven los gastos marcados como compartidos.
+- **Metas de ahorro**: El dueño tiene control total. Los participantes de metas compartidas pueden ver, depositar y retirar.
 - **Recursos no autorizados**: Retornan **404** (no 403) para ocultar la existencia del recurso.
 
-### Por que PostgreSQL y no SQLite?
+### ¿Por qué PostgreSQL y no SQLite?
 
 Aunque SQLite funciona para desarrollo, PostgreSQL en Supabase ofrece:
 - Soporte para transacciones ACID completas
 - Pool de conexiones (Transaction Pooler)
-- Backups automaticos
+- Backups automáticos
 - Escalabilidad si el proyecto crece
 - Compatibilidad con Docker (PostgreSQL 16 Alpine en desarrollo local)
 
 ### Multi-stage Docker Build
 
-El Dockerfile usa un build de dos etapas para optimizar el tamano de la imagen final:
+El Dockerfile usa un build de dos etapas para optimizar el tamaño de la imagen final:
 
 1. **Stage 1 (deps)**: Instala todas las dependencias de Python
-2. **Stage 2 (production)**: Copia solo las dependencias instaladas + el codigo
+2. **Stage 2 (production)**: Copia solo las dependencias instaladas + el código
 
-Esto reduce la imagen final de ~900MB a ~200MB. Ademas, el contenedor corre con un usuario no-root (`appuser`) por seguridad.
+Esto reduce la imagen final de ~900MB a ~200MB. Además, el contenedor corre con un usuario no-root (`appuser`) por seguridad.
 
 ---
 
