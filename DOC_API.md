@@ -1,6 +1,6 @@
-# Documentación API - Finanzas Backend
+# Documentacion API - Finanzas
 
-Guía completa de la API REST para el desarrollo del frontend.
+Guia completa de la API REST.
 
 **Base URL:** `http://127.0.0.1:8000/api/`
 
@@ -8,9 +8,9 @@ Guía completa de la API REST para el desarrollo del frontend.
 
 ## Tabla de contenido
 
-- [Autenticación](#autenticación)
-  - [Flujo de activación](#flujo-de-activación)
-  - [Cómo usar el JWT](#cómo-usar-el-jwt)
+- [Autenticacion](#autenticacion)
+  - [Flujo de activacion](#flujo-de-activacion)
+  - [Como usar el JWT](#como-usar-el-jwt)
   - [Refresh token](#refresh-token)
 - [Endpoints](#endpoints)
   - [POST /api/activate-key/](#post-apiactivate-key)
@@ -27,57 +27,45 @@ Guía completa de la API REST para el desarrollo del frontend.
   - [POST /api/savings/goals/{id}/withdraw/](#post-apisavings-goalsidwithdraw)
   - [GET /api/savings/goals/{id}/movements/](#get-apisavings-goalsidmovements)
   - [POST /api/savings/goals/{id}/participants/](#post-apisavings-goalsidparticipants)
-- [Códigos de error](#códigos-de-error)
+- [Codigos de error](#codigos-de-error)
 - [Estructuras de datos](#estructuras-de-datos)
 
 ---
 
-## Autenticación
+## Autenticacion
 
-### Flujo de activación
+### Flujo de activacion
 
 ```
-1. Frontend envía POST /api/activate-key/ con { key, name }
+1. Cliente envia POST /api/activate-key/ con { key, name }
 2. Backend valida la llave
-3. Si es válida → crea el usuario + retorna JWT
-4. Si no es válida → retorna error 400
+3. Si es valida -> crea el usuario + retorna JWT
+4. Si no es valida -> retorna error 400
 ```
 
-**Después de activar, el usuario NUNCA necesita hacer login de nuevo** — el JWT se renueva con el refresh token.
+**Despues de activar, el usuario NUNCA necesita hacer login de nuevo** — el JWT se renueva con el refresh token.
 
-### Cómo usar el JWT
+### Como usar el JWT
 
-Incluir el token en cada petición autenticada:
+Incluir el token en cada peticion autenticada:
 
 ```
 Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
 ```
 
-En JavaScript/Fetch:
-```javascript
-fetch('http://127.0.0.1:8000/api/expenses/', {
-  headers: {
-    'Authorization': `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  }
-})
-```
+Ejemplo con curl:
 
-En React Native con Axios:
-```javascript
-api.get('/api/expenses/', {
-  headers: {
-    Authorization: `Bearer ${accessToken}`
-  }
-})
+```bash
+curl -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIs..." \
+     http://127.0.0.1:8000/api/expenses/
 ```
 
 ### Refresh token
 
 - **Access token**: 60 min de vida (configurable)
-- **Refresh token**: 7 días de vida
+- **Refresh token**: 7 dias de vida
 
-Cuando el access token expira, usar el refresh token para obtener uno nuevo. (Endpoint de refresh no implementado aún, se agregará en un paso futuro).
+Cuando el access token expira, usar el refresh token para obtener uno nuevo.
 
 ---
 
@@ -89,7 +77,7 @@ Cuando el access token expira, usar el refresh token para obtener uno nuevo. (En
 
 Activa una llave de acceso, crea la cuenta de usuario y retorna JWT.
 
-**No requiere autenticación.**
+**No requiere autenticacion.**
 
 #### Request
 
@@ -100,10 +88,10 @@ Activa una llave de acceso, crea la cuenta de usuario y retorna JWT.
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `key` | string | Sí | Llave de activación |
-| `name` | string | Sí | Nombre del usuario |
+| `key` | string | Si | Llave de activacion |
+| `name` | string | Si | Nombre del usuario |
 
 #### Response — 201 Created
 
@@ -123,9 +111,9 @@ Activa una llave de acceso, crea la cuenta de usuario y retorna JWT.
 
 #### Errores
 
-| Código | Body | Causa |
+| Codigo | Body | Causa |
 |---|---|---|
-| 400 | `{"detail": "La llave ingresada no es válida."}` | La llave no existe en la BD |
+| 400 | `{"detail": "La llave ingresada no es valida."}` | La llave no existe en la BD |
 | 400 | `{"detail": "La llave ya fue utilizada anteriormente."}` | La llave ya fue activada |
 | 400 | `{"key": ["Este campo es requerido."]}` | Falta el campo `key` |
 | 400 | `{"name": ["Este campo es requerido."]}` | Falta el campo `name` |
@@ -134,28 +122,28 @@ Activa una llave de acceso, crea la cuenta de usuario y retorna JWT.
 
 ### POST `/api/expenses/`
 
-Crea un nuevo gasto. El `usuario` se obtiene automáticamente del JWT.
+Crea un nuevo gasto. El `usuario` se obtiene automaticamente del JWT.
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request
 
 ```json
 {
-  "categoria": "Alimentación",
+  "categoria": "Alimentacion",
   "fecha": "2026-07-15",
-  "descripcion": "Almuerzo en resturante",
+  "descripcion": "Almuerzo en restaurante",
   "valor": 45000,
   "compartido": false
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `categoria` | string | Sí | Categoría del gasto (máx 100 caracteres) |
-| `fecha` | string (date) | Sí | Fecha del gasto. Formato: `YYYY-MM-DD` |
-| `descripcion` | string | Sí | Descripción (máx 255 caracteres) |
-| `valor` | number | Sí | Valor monetario (hasta 12 dígitos, 2 decimales) |
+| `categoria` | string | Si | Categoria del gasto (max 100 caracteres) |
+| `fecha` | string (date) | Si | Fecha del gasto. Formato: `YYYY-MM-DD` |
+| `descripcion` | string | Si | Descripcion (max 255 caracteres) |
+| `valor` | number | Si | Valor monetario (hasta 12 digitos, 2 decimales) |
 | `compartido` | boolean | No | Default: `false` |
 
 #### Response — 201 Created
@@ -164,9 +152,9 @@ Crea un nuevo gasto. El `usuario` se obtiene automáticamente del JWT.
 {
   "id": 1,
   "usuario_nombre": "Juan",
-  "categoria": "Alimentación",
+  "categoria": "Alimentacion",
   "fecha": "2026-07-15",
-  "descripcion": "Almuerzo en resturante",
+  "descripcion": "Almuerzo en restaurante",
   "valor": "45000.00",
   "compartido": false,
   "created_at": "2026-07-15T12:00:00-05:00"
@@ -175,10 +163,10 @@ Crea un nuevo gasto. El `usuario` se obtiene automáticamente del JWT.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
-| 401 | No autenticado / token inválido |
-| 400 | Campos faltantes o inválidos |
+| 401 | No autenticado / token invalido |
+| 400 | Campos faltantes o invalidos |
 
 ---
 
@@ -188,7 +176,7 @@ Lista los gastos del usuario autenticado. Incluye:
 - Todos los gastos propios
 - Gastos de otros usuarios donde `compartido = true`
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 200 OK
 
@@ -197,16 +185,16 @@ Lista los gastos del usuario autenticado. Incluye:
   {
     "id": 1,
     "usuario_nombre": "Juan",
-    "categoria": "Alimentación",
+    "categoria": "Alimentacion",
     "fecha": "2026-07-15",
-    "descripcion": "Almuerzo en resturante",
+    "descripcion": "Almuerzo en restaurante",
     "valor": "45000.00",
     "compartido": false,
     "created_at": "2026-07-15T12:00:00-05:00"
   },
   {
     "id": 2,
-    "usuario_nombre": "María",
+    "usuario_nombre": "Maria",
     "categoria": "Transporte",
     "fecha": "2026-07-14",
     "descripcion": "Uber al trabajo",
@@ -217,19 +205,19 @@ Lista los gastos del usuario autenticado. Incluye:
 ]
 ```
 
-> **Nota**: Los gastos compartidos muestran el `usuario_nombre` del dueño original.
+> **Nota**: Los gastos compartidos muestran el `usuario_nombre` del dueno original.
 
 ---
 
 ### GET `/api/expenses/{id}/`
 
-Obtiene el detalle de un gasto específico.
+Obtiene el detalle de un gasto especifico.
 
-- Si es tu gasto → lo ves
-- Si es gasto de otro usuario y es compartido → lo ves
-- Si es gasto de otro usuario y NO es compartido → 404
+- Si es tu gasto -> lo ves
+- Si es gasto de otro usuario y es compartido -> lo ves
+- Si es gasto de otro usuario y NO es compartido -> 404
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 200 OK
 
@@ -237,9 +225,9 @@ Obtiene el detalle de un gasto específico.
 {
   "id": 1,
   "usuario_nombre": "Juan",
-  "categoria": "Alimentación",
+  "categoria": "Alimentacion",
   "fecha": "2026-07-15",
-  "descripcion": "Almuerzo en resturante",
+  "descripcion": "Almuerzo en restaurante",
   "valor": "45000.00",
   "compartido": false,
   "created_at": "2026-07-15T12:00:00-05:00"
@@ -248,7 +236,7 @@ Obtiene el detalle de un gasto específico.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 404 | El gasto no existe o no tienes acceso |
 | 401 | No autenticado |
@@ -259,7 +247,7 @@ Obtiene el detalle de un gasto específico.
 
 Actualiza un gasto. Solo el propietario puede actualizar. Se puede enviar solo los campos que se quieren modificar (partial update).
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request (parcial)
 
@@ -270,11 +258,11 @@ Actualiza un gasto. Solo el propietario puede actualizar. Se puede enviar solo l
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `categoria` | string | No | Categoría |
+| `categoria` | string | No | Categoria |
 | `fecha` | string (date) | No | Fecha `YYYY-MM-DD` |
-| `descripcion` | string | No | Descripción |
+| `descripcion` | string | No | Descripcion |
 | `valor` | number | No | Valor monetario |
 | `compartido` | boolean | No | Visibilidad |
 
@@ -284,9 +272,9 @@ Actualiza un gasto. Solo el propietario puede actualizar. Se puede enviar solo l
 {
   "id": 1,
   "usuario_nombre": "Juan",
-  "categoria": "Alimentación",
+  "categoria": "Alimentacion",
   "fecha": "2026-07-15",
-  "descripcion": "Almuerzo en resturante",
+  "descripcion": "Almuerzo en restaurante",
   "valor": "50000.00",
   "compartido": true,
   "created_at": "2026-07-15T12:00:00-05:00"
@@ -295,7 +283,7 @@ Actualiza un gasto. Solo el propietario puede actualizar. Se puede enviar solo l
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 403 | Intentas editar un gasto de otro usuario |
 | 404 | El gasto no existe o no es tuyo |
@@ -307,13 +295,13 @@ Actualiza un gasto. Solo el propietario puede actualizar. Se puede enviar solo l
 
 Crea una meta de ahorro. El usuario autenticado es el propietario.
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request
 
 ```json
 {
-  "name": "Viaje a Japón",
+  "name": "Viaje a Japon",
   "description": "Ahorro para el viaje de diciembre",
   "target_amount": 5000000,
   "currency": "COP",
@@ -322,13 +310,13 @@ Crea una meta de ahorro. El usuario autenticado es el propietario.
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `name` | string | Sí | Nombre de la meta (máx 255) |
-| `description` | string | No | Descripción (default: "") |
-| `target_amount` | number | Sí | Monto objetivo (máx 15 dígitos, 2 decimales, mínimo 0.01) |
+| `name` | string | Si | Nombre de la meta (max 255) |
+| `description` | string | No | Descripcion (default: "") |
+| `target_amount` | number | Si | Monto objetivo (max 15 digitos, 2 decimales, minimo 0.01) |
 | `currency` | string | No | Moneda (default: "COP") |
-| `deadline` | string (date) | No | Fecha límite `YYYY-MM-DD` |
+| `deadline` | string (date) | No | Fecha limite `YYYY-MM-DD` |
 | `is_shared` | boolean | No | Default: `false` |
 
 #### Response — 201 Created
@@ -337,7 +325,7 @@ Crea una meta de ahorro. El usuario autenticado es el propietario.
 {
   "id": 1,
   "owner_name": "Juan",
-  "name": "Viaje a Japón",
+  "name": "Viaje a Japon",
   "description": "Ahorro para el viaje de diciembre",
   "target_amount": "5000000.00",
   "current_amount": "0.00",
@@ -353,7 +341,7 @@ Crea una meta de ahorro. El usuario autenticado es el propietario.
 }
 ```
 
-> Si `is_shared = true`, el propietario se agrega automáticamente como participante.
+> Si `is_shared = true`, el propietario se agrega automaticamente como participante.
 
 ---
 
@@ -363,7 +351,7 @@ Lista las metas del usuario autenticado. Incluye:
 - Todas las metas propias
 - Metas de otros usuarios donde `is_shared = true` y el usuario es participante
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 200 OK
 
@@ -372,7 +360,7 @@ Lista las metas del usuario autenticado. Incluye:
   {
     "id": 1,
     "owner_name": "Juan",
-    "name": "Viaje a Japón",
+    "name": "Viaje a Japon",
     "description": "Ahorro para el viaje de diciembre",
     "target_amount": "5000000.00",
     "current_amount": "1500000.00",
@@ -390,7 +378,7 @@ Lista las metas del usuario autenticado. Incluye:
 ```
 
 > **Campos calculados**:
-> - `remaining_amount` = `target_amount` - `current_amount` (mínimo 0)
+> - `remaining_amount` = `target_amount` - `current_amount` (minimo 0)
 > - `progress` = porcentaje (0 - 100)
 > - `participants_count` = cantidad de participantes
 
@@ -400,39 +388,19 @@ Lista las metas del usuario autenticado. Incluye:
 
 Detalle de una meta de ahorro.
 
-- Si eres el propietario → la ves
-- Si eres participante y es compartida → la ves
-- Si no tienes acceso → 404
+- Si eres el propietario -> la ves
+- Si eres participante y es compartida -> la ves
+- Si no tienes acceso -> 404
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 200 OK
 
-Misma estructura que el listado, pero como objeto único:
-
-```json
-{
-  "id": 1,
-  "owner_name": "Juan",
-  "name": "Viaje a Japón",
-  "description": "Ahorro para el viaje de diciembre",
-  "target_amount": "5000000.00",
-  "current_amount": "1500000.00",
-  "remaining_amount": "3500000.00",
-  "currency": "COP",
-  "deadline": "2026-12-01",
-  "is_shared": false,
-  "status": "ACTIVE",
-  "progress": 30.0,
-  "participants_count": 0,
-  "created_at": "2026-07-15T12:00:00-05:00",
-  "updated_at": "2026-07-15T14:30:00-05:00"
-}
-```
+Misma estructura que el listado, pero como objeto unico.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 404 | La meta no existe o no tienes acceso |
 | 401 | No autenticado |
@@ -443,9 +411,9 @@ Misma estructura que el listado, pero como objeto único:
 
 Actualiza una meta de ahorro. Solo el propietario puede actualizar.
 
-**No se puede modificar:** `owner`, `current_amount` (se actualiza vía depósitos/retiros).
+**No se puede modificar:** `owner`, `current_amount` (se actualiza via depositos/retiros).
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request (parcial)
 
@@ -462,7 +430,7 @@ Misma estructura que GET detail.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 403 | No eres el propietario |
 | 404 | La meta no existe |
@@ -474,7 +442,7 @@ Misma estructura que GET detail.
 
 Elimina una meta de ahorro. Solo el propietario puede eliminar. Se elimina la meta y todos sus movimientos y participantes en cascada.
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 204 No Content
 
@@ -482,7 +450,7 @@ Sin body.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 403 | No eres el propietario |
 | 404 | La meta no existe |
@@ -492,13 +460,13 @@ Sin body.
 
 ### POST `/api/savings/goals/{id}/deposit/`
 
-Registra un depósito en una meta. El monto se suma al `current_amount`.
+Registra un deposito en una meta. El monto se suma al `current_amount`.
 
 - Solo se puede depositar en metas con status `ACTIVE`
-- Si el depósito hace que `current_amount >= target_amount`, la meta cambia a `COMPLETED`
+- Si el deposito hace que `current_amount >= target_amount`, la meta cambia a `COMPLETED`
 - En metas compartidas, cualquier participante puede depositar
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request
 
@@ -509,16 +477,16 @@ Registra un depósito en una meta. El monto se suma al `current_amount`.
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `amount` | number | Sí | Monto a depositar (mínimo 0.01) |
-| `description` | string | No | Descripción (default: "") |
+| `amount` | number | Si | Monto a depositar (minimo 0.01) |
+| `description` | string | No | Descripcion (default: "") |
 
 #### Response — 201 Created
 
 ```json
 {
-  "detail": "Depósito registrado exitosamente.",
+  "detail": "Deposito registrado exitosamente.",
   "movement": {
     "id": 1,
     "user_name": "Juan",
@@ -530,23 +498,22 @@ Registra un depósito en una meta. El monto se suma al `current_amount`.
   "goal": {
     "id": 1,
     "owner_name": "Juan",
-    "name": "Viaje a Japón",
+    "name": "Viaje a Japon",
     "current_amount": "2000000.00",
     "target_amount": "5000000.00",
     "remaining_amount": "3000000.00",
     "progress": 40.0,
-    "status": "ACTIVE",
-    ...
+    "status": "ACTIVE"
   }
 }
 ```
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
-| 400 | La meta no está activa (PAUSED/CANCELLED/COMPLETED) |
-| 400 | Monto inválido o faltante |
+| 400 | La meta no esta activa (PAUSED/CANCELLED/COMPLETED) |
+| 400 | Monto invalido o faltante |
 | 403 | No eres propietario ni participante |
 | 404 | La meta no existe |
 | 401 | No autenticado |
@@ -560,7 +527,7 @@ Registra un retiro de una meta. El monto se resta al `current_amount`.
 - No se permiten retiros que dejen el saldo negativo
 - Solo se puede retirar en metas con status `ACTIVE`
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request
 
@@ -571,10 +538,10 @@ Registra un retiro de una meta. El monto se resta al `current_amount`.
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `amount` | number | Sí | Monto a retirar (mínimo 0.01) |
-| `description` | string | No | Descripción (default: "") |
+| `amount` | number | Si | Monto a retirar (minimo 0.01) |
+| `description` | string | No | Descripcion (default: "") |
 
 #### Response — 201 Created
 
@@ -594,19 +561,18 @@ Registra un retiro de una meta. El monto se resta al `current_amount`.
     "current_amount": "1900000.00",
     "remaining_amount": "3100000.00",
     "progress": 38.0,
-    "status": "ACTIVE",
-    ...
+    "status": "ACTIVE"
   }
 }
 ```
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 400 | Saldo insuficiente (`amount > current_amount`) |
-| 400 | La meta no está activa |
-| 400 | Monto inválido o faltante |
+| 400 | La meta no esta activa |
+| 400 | Monto invalido o faltante |
 | 403 | No eres propietario ni participante |
 | 404 | La meta no existe |
 | 401 | No autenticado |
@@ -617,7 +583,7 @@ Registra un retiro de una meta. El monto se resta al `current_amount`.
 
 Historial de movimientos de una meta. Solo el propietario o participantes pueden ver el historial.
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Response — 200 OK
 
@@ -642,11 +608,11 @@ Historial de movimientos de una meta. Solo el propietario o participantes pueden
 ]
 ```
 
-> Los movimientos se ordenan del más reciente al más antiguo.
+> Los movimientos se ordenan del mas reciente al mas antiguo.
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 403 | No eres propietario ni participante |
 | 404 | La meta no existe |
@@ -660,7 +626,7 @@ Agrega un usuario como participante de una meta compartida. Solo el propietario 
 
 **La meta debe tener `is_shared = true`.**
 
-**Requiere autenticación.**
+**Requiere autenticacion.**
 
 #### Request
 
@@ -670,23 +636,23 @@ Agrega un usuario como participante de una meta compartida. Solo el propietario 
 }
 ```
 
-| Campo | Tipo | Requerido | Descripción |
+| Campo | Tipo | Requerido | Descripcion |
 |---|---|---|---|
-| `user_id` | integer | Sí | ID del usuario a agregar |
+| `user_id` | integer | Si | ID del usuario a agregar |
 
 #### Response — 201 Created
 
 ```json
 {
   "id": 1,
-  "user_name": "María",
+  "user_name": "Maria",
   "joined_at": "2026-07-15T16:00:00-05:00"
 }
 ```
 
 #### Errores
 
-| Código | Causa |
+| Codigo | Causa |
 |---|---|
 | 400 | La meta no es compartida |
 | 400 | `user_id` faltante |
@@ -698,18 +664,18 @@ Agrega un usuario como participante de una meta compartida. Solo el propietario 
 
 ---
 
-## Códigos de error
+## Codigos de error
 
-| Código | Significado | Cuándo ocurre |
+| Codigo | Significado | Cuando ocurre |
 |---|---|---|
-| `200` | OK | Operación exitosa |
+| `200` | OK | Operacion exitosa |
 | `201` | Created | Recurso creado exitosamente |
-| `204` | No Content | Eliminación exitosa (sin body) |
-| `400` | Bad Request | Datos inválidos, faltantes o regla de negocio violada |
-| `401` | Unauthorized | No autenticado o token inválido/expirado |
-| `403` | Forbidden | Autenticado pero sin permiso para esta acción |
+| `204` | No Content | Eliminacion exitosa (sin body) |
+| `400` | Bad Request | Datos invalidos, faltantes o regla de negocio violada |
+| `401` | Unauthorized | No autenticado o token invalido/expirado |
+| `403` | Forbidden | Autenticado pero sin permiso para esta accion |
 | `404` | Not Found | El recurso no existe o no tienes acceso |
-| `405` | Method Not Allowed | Método HTTP no permitido (ej: DELETE en gastos) |
+| `405` | Method Not Allowed | Metodo HTTP no permitido (ej: DELETE en gastos) |
 
 ### Formato de errores
 
@@ -717,11 +683,11 @@ Siempre retorna un JSON con la clave `detail`:
 
 ```json
 {
-  "detail": "Mensaje descriptivo del error en español"
+  "detail": "Mensaje descriptivo del error en espanol"
 }
 ```
 
-Para errores de validación de campos:
+Para errores de validacion de campos:
 
 ```json
 {
@@ -735,97 +701,79 @@ Para errores de validación de campos:
 
 ### Gasto (Expense)
 
-```typescript
-interface Expense {
-  id: number;
-  usuario_nombre: string;    // Nombre del dueño (read-only)
-  categoria: string;
-  fecha: string;              // "YYYY-MM-DD"
-  descripcion: string;
-  valor: string;              // "123456.78"
-  compartido: boolean;
-  created_at: string;         // "YYYY-MM-DDTHH:MM:SS-05:00"
-}
-```
+| Campo | Tipo | Descripcion |
+|---|---|---|
+| `id` | integer | ID unico del gasto |
+| `usuario_nombre` | string | Nombre del dueno (solo lectura) |
+| `categoria` | string | Categoria del gasto |
+| `fecha` | string | Fecha `YYYY-MM-DD` |
+| `descripcion` | string | Descripcion del gasto |
+| `valor` | string | Valor monetario `"123456.78"` |
+| `compartido` | boolean | Visibilidad compartida |
+| `created_at` | string | Fecha de creacion ISO 8601 |
 
 ### Meta de ahorro (SavingGoal)
 
-```typescript
-interface SavingGoal {
-  id: number;
-  owner_name: string;         // Nombre del propietario (read-only)
-  name: string;
-  description: string;
-  target_amount: string;      // "5000000.00"
-  current_amount: string;     // Actualizado vía depósitos/retiros (read-only)
-  remaining_amount: string;   // Calculado: target - current (read-only)
-  currency: string;           // "COP"
-  deadline: string | null;    // "YYYY-MM-DD" o null
-  is_shared: boolean;
-  status: "ACTIVE" | "COMPLETED" | "PAUSED" | "CANCELLED";
-  progress: number;           // 0.0 - 100.0 (read-only)
-  participants_count: number; // read-only
-  created_at: string;
-  updated_at: string;
-}
-```
+| Campo | Tipo | Descripcion |
+|---|---|---|
+| `id` | integer | ID unico de la meta |
+| `owner_name` | string | Nombre del propietario (solo lectura) |
+| `name` | string | Nombre de la meta |
+| `description` | string | Descripcion |
+| `target_amount` | string | Monto objetivo `"5000000.00"` |
+| `current_amount` | string | Monto actual (solo lectura) |
+| `remaining_amount` | string | Calculado: target - current (solo lectura) |
+| `currency` | string | Moneda `"COP"` |
+| `deadline` | string/null | Fecha limite `YYYY-MM-DD` o null |
+| `is_shared` | boolean | Meta compartida |
+| `status` | string | `ACTIVE` / `COMPLETED` / `PAUSED` / `CANCELLED` |
+| `progress` | number | Porcentaje 0.0 - 100.0 (solo lectura) |
+| `participants_count` | integer | Cantidad de participantes (solo lectura) |
+| `created_at` | string | Fecha de creacion ISO 8601 |
+| `updated_at` | string | Fecha de actualizacion ISO 8601 |
 
 ### Movimiento de ahorro (SavingMovement)
 
-```typescript
-interface SavingMovement {
-  id: number;
-  user_name: string;          // Nombre de quien hizo el movimiento
-  type: "DEPOSIT" | "WITHDRAW" | "ADJUSTMENT";
-  amount: string;             // "500000.00"
-  description: string;
-  created_at: string;
-}
-```
+| Campo | Tipo | Descripcion |
+|---|---|---|
+| `id` | integer | ID unico del movimiento |
+| `user_name` | string | Nombre de quien hizo el movimiento |
+| `type` | string | `DEPOSIT` / `WITHDRAW` / `ADJUSTMENT` |
+| `amount` | string | Monto `"500000.00"` |
+| `description` | string | Descripcion |
+| `created_at` | string | Fecha de creacion ISO 8601 |
 
 ### Participante (SavingGoalParticipant)
 
-```typescript
-interface SavingGoalParticipant {
-  id: number;
-  user_name: string;
-  joined_at: string;
-}
-```
+| Campo | Tipo | Descripcion |
+|---|---|---|
+| `id` | integer | ID unico del participante |
+| `user_name` | string | Nombre del usuario |
+| `joined_at` | string | Fecha de加入 ISO 8601 |
 
 ### Tokens JWT
 
-```typescript
-interface TokenResponse {
-  access: string;   // Usar en Authorization header
-  refresh: string;  // Usar para renovar access token
-}
-```
+| Campo | Tipo | Descripcion |
+|---|---|---|
+| `access` | string | Token de acceso (usar en Authorization header) |
+| `refresh` | string | Token de refresco (usar para renovar access token) |
 
 ---
 
-## Notas para el frontend
+## Notas generales
 
 ### IDs de usuarios
 
-Los IDs de usuario son `1` y `2` (los 2 usuarios únicos de la app). Se obtienen del JWT al activar la cuenta o del campo `user` en la respuesta de `/api/activate-key/`.
+Los IDs de usuario son `1` y `2` (los 2 usuarios unicos). Se obtienen del JWT al activar la cuenta o del campo `user` en la respuesta de `/api/activate-key/`.
 
 ### Valores monetarios
 
-Los valores monetarios vienen como **strings** con 2 decimales (ej: `"45000.00"`). En el frontend, parsear a número antes de mostrar:
-
-```javascript
-const valorNumerico = parseFloat(expense.valor);
-```
+Los valores monetarios vienen como **strings** con 2 decimales (ej: `"45000.00"`). Parsear a numero antes de usar en calculos.
 
 ### Fechas
 
 Las fechas de tipo `DateField` vienen en formato `YYYY-MM-DD`. Las de tipo `DateTimeField` vienen en formato ISO 8601 con zona horaria (ej: `2026-07-15T12:00:00-05:00`).
 
-### Paginación
+### Paginacion
 
-La API no tiene paginación implementada actualmente. El listado retorna todos los registros. Para los 2 usuarios del proyecto, esto es suficiente. Si en el futuro se necesita, se agregará paginación offset o cursor.
-
-### CORS
-
-El backend NO tiene CORS configurado actualmente. Cuando se desarrolle el frontend, se necesitará agregar `django-cors-headers` al backend para permitir peticiones desde el dominio del frontend.
+La API no tiene paginacion implementada actualmente. El listado retorna todos los registros. Para los 2 usuarios del proyecto, esto es suficiente.

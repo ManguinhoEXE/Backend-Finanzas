@@ -1,5 +1,5 @@
 # ============================================
-# docker-compose.prod.yml — Producción
+# docker-compose.prod.yml — Produccion
 # Django apuntando a Supabase (PostgreSQL remoto)
 # ============================================
 
@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: finanzas_web_prod
+    container_name: finanzas_api_prod
     command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120
     volumes:
       - static_volume:/app/staticfiles

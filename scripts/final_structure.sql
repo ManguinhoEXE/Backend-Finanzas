@@ -9,7 +9,7 @@
 
 -- ============================================
 -- TABLA: authentication_user
--- DESCRIPCIÓN: Almacena los usuarios de la aplicación
+-- DESCRIPCIÓN: Almacena los usuarios del sistema
 -- ============================================
 CREATE TABLE IF NOT EXISTS authentication_user (
     id BIGSERIAL PRIMARY KEY,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS authentication_user (
 );
 
 -- Comentario de la tabla
-COMMENT ON TABLE authentication_user IS 'Tabla de usuarios de la aplicación';
+COMMENT ON TABLE authentication_user IS 'Tabla de usuarios del sistema';
 
 -- Comentarios de las columnas
 COMMENT ON COLUMN authentication_user.id IS 'Identificador único del usuario';

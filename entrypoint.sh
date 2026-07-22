@@ -2,13 +2,13 @@
 set -e
 
 echo "============================================"
-echo "  Finanzas Backend — Iniciando aplicacion"
+echo "  Finanzas API — Iniciando servidor"
 echo "============================================"
 
 # Puerto por defecto (Render usa PORT, local usa 8000)
 PORT=${PORT:-8000}
 
-# Esperar a que PostgreSQL este listo (solo en desarrollo local, no en Belmo)
+# Esperar a que PostgreSQL este listo (solo en desarrollo local)
 if [ -z "$DATABASE_URL" ]; then
     echo "Esperando a que PostgreSQL este disponible en $HOST:${DB_PORT:-5432}..."
     until python -c "

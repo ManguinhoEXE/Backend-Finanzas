@@ -46,7 +46,7 @@ DEBUG = env('DEBUG')
 # Hosts permitidos (obtenidos desde .env)
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
-# Puerto de la aplicacion (Belmo inyecta PORT)
+# Puerto de la aplicacion
 PORT = env('PORT')
 
 # ============================================
@@ -125,7 +125,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASE_URL = env('DATABASE_URL')
 
 if DATABASE_URL:
-    # Produccion (Belmo) - usa DATABASE_URL
+    # Produccion - usa DATABASE_URL
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(
@@ -236,7 +236,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ============================================
 
 if not DEBUG:
-    # Seguridad en produccion (Belmo, Render, etc.)
+    # Seguridad en produccion
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     SESSION_COOKIE_SECURE = True

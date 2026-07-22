@@ -3,7 +3,7 @@
 -- Proyecto: Finanzas - Gestor de Gastos Personales
 -- ============================================
 -- Este script crea las dos llaves de acceso únicas
--- para los dos usuarios de la aplicación.
+-- para los dos usuarios del sistema.
 --
 -- INSTRUCCIONES:
 -- 1. Copiar este script

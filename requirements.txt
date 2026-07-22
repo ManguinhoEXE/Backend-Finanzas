@@ -1,5 +1,5 @@
 # ============================================
-# Dependencias — Finanzas Backend
+# Dependencias — Finanzas API
 # ============================================
 
 # Framework

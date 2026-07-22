@@ -1,19 +1,36 @@
-"""Script para limpiar la base de datos de test."""
+"""Script para limpiar la base de datos de test.
+
+Requiere las siguientes variables de entorno:
+  DB_NAME, USER, PASSWORD, HOST, DB_PORT
+
+Ejemplo:
+  DB_NAME=postgres USER=postgres.xxx PASSWORD=xxx HOST=xxx DB_PORT=6543 python scripts/cleanup_test_db.py
+"""
+import os
 import time
 import psycopg2
 
-# Conectar a PostgreSQL
+DB_NAME = os.environ.get('DB_NAME', 'postgres')
+USER = os.environ.get('USER')
+PASSWORD = os.environ.get('PASSWORD')
+HOST = os.environ.get('HOST')
+DB_PORT = os.environ.get('DB_PORT', '6543')
+
+if not all([USER, PASSWORD, HOST]):
+    print("Error: Faltan variables de entorno. Requiere: USER, PASSWORD, HOST")
+    print("Ejemplo: DB_NAME=postgres USER=postgres.xxx PASSWORD=xxx HOST=xxx DB_PORT=6543 python scripts/cleanup_test_db.py")
+    exit(1)
+
 conn = psycopg2.connect(
-    dbname='postgres',
-    user='postgres.yrsmexabolllfvlrdgcp',
-    password='Dybala2003###',
-    host='aws-1-us-east-2.pooler.supabase.com',
-    port='6543'
+    dbname=DB_NAME,
+    user=USER,
+    password=PASSWORD,
+    host=HOST,
+    port=DB_PORT
 )
 conn.autocommit = True
 cur = conn.cursor()
 
-# Terminar conexiones activas a test_postgres
 cur.execute("""
     SELECT pg_terminate_backend(pid)
     FROM pg_stat_activity
@@ -22,16 +39,13 @@ cur.execute("""
 terminated = cur.fetchall()
 print(f'Conexiones terminadas: {terminated}')
 
-# Esperar a que se libere
 time.sleep(3)
 
-# Intentar eliminar la base de datos
 try:
     cur.execute("DROP DATABASE IF EXISTS test_postgres")
     print('Base de datos test_postgres eliminada correctamente')
 except Exception as e:
     print(f'Error al eliminar: {e}')
-    # Intentar de nuevo después de más tiempo
     time.sleep(5)
     cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'test_postgres'")
     time.sleep(3)

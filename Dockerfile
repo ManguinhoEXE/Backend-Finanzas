@@ -1,6 +1,6 @@
 # ============================================
-# Dockerfile — Finanzas Backend
-# Multi-stage build para producción
+# Dockerfile — Finanzas API
+# Multi-stage build para produccion
 # ============================================
 
 # ---- Stage 1: Dependencias ----
@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# ---- Stage 2: Producción ----
+# ---- Stage 2: Produccion ----
 FROM python:3.11-slim AS production
 
 ENV PYTHONDONTWRITEBYTECODE=1

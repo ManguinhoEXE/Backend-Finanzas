@@ -1,11 +1,10 @@
 # ============================================
-# VARIABLES DE ENTORNO
+# VARIABLES DE ENTORNO (CREDENCIALES)
 # ============================================
 .env
-.env.local
-.env.production
-.env.test
-.env.staging
+.env.*
+!.env.example
+!.env.example.*
 
 # ============================================
 # PYTHON
@@ -23,7 +22,6 @@ eggs/
 *.whl
 pip-log.txt
 pip-delete-this-directory.txt
-*.whl
 
 # ============================================
 # ENTORNO VIRTUAL
@@ -44,7 +42,6 @@ local_settings.py
 media/
 staticfiles/
 *.pot
-local_settings.py
 db.json
 
 # ============================================
@@ -92,6 +89,7 @@ pyrightconfig.json
 .classpath
 *.sublime-project
 *.sublime-workspace
+.kombai/
 
 # ============================================
 # SISTEMA OPERATIVO
@@ -126,3 +124,14 @@ dump.rdb
 # GUNICORN
 # ============================================
 *.pid
+
+# ============================================
+# CREDENCIALES / SECRETOS
+# ============================================
+**/credentials.json
+**/secrets.json
+**/*.pem
+**/*.key
+**/*.crt
+**/*.p12
+**/*.pfx
